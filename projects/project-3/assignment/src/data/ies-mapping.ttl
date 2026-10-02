@@ -1,0 +1,5 @@
+@prefix ies: <http://ies.data.gov.uk/ontology/ies4#> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+
+# Crossing is a site
+ies:Crossing rdfs:subClassOf obo:BFO_0000029 .   # site
