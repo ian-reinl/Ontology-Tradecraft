@@ -27,6 +27,6 @@ OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
-    writer.writerow(["IRI", "Label", "Definition"])
+    writer.writerow(["IRI", "label", "definition"])
     for row in results:
         writer.writerow([str(row.IRI), str(row.label), str(row.definition) if row.definition else ""])

@@ -1,4 +1,4 @@
-IRI,Label,Definition
+IRI,label,definition
 https://www.commoncoreontologies.org/EventOntology,Event Ontology,
 http://purl.obolibrary.org/obo/BFO_0000144,Process Profile,"An occurrent that is an occurrent part of some process by virtue of the rate, or pattern, or magnitude of change in an attribute of one or more participants of said process."
 https://www.commoncoreontologies.org/ont00000004,Change,"A Process in which some independent continuant endures and 1) one or more of the dependent entities it bears increase or decrease in intensity, 2) the entity begins to bear some dependent entity or 3) the entity ceases to bear some dependent entity."
