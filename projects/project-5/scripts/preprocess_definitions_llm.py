@@ -1,9 +1,10 @@
 import csv
+from concurrent.futures import ThreadPoolExecutor
 import anthropic
 from dotenv import load_dotenv
 
-load_dotenv()                   # puts ANTHROPIC_API_KEY into the environment
-client = anthropic.Anthropic()  # finds the key on its own
+load_dotenv()                             # puts ANTHROPIC_API_KEY into the environment
+client = anthropic.Anthropic(max_retries=5)  # SDK backs off on 429s/overloads
 
 PROMPT = """Rewrite this CCO textual definition in the form
 "A/An <label> is a/an <genus> that <differentia>."
@@ -18,13 +19,27 @@ def normalize(label, definition):
         max_tokens=1024,
         messages=[{"role": "user", "content": PROMPT.format(label=label, definition=definition)}],
     )
-    return next(b.text for b in msg.content if b.type == "text").strip()
+    for b in msg.content:
+        if b.type == "text":
+            return b.text.strip()
+    raise RuntimeError(f"no text block (stop_reason={msg.stop_reason}) for {label}")
 
-def main(in_path="data/definitions.csv", out_path="data/definitions_enriched.csv"):
+def enrich(row):
+    d = row["definition"].strip()
+    if not d:
+        row["definition_enriched"] = ""
+        return row
+    try:
+        row["definition_enriched"] = normalize(row["label"], d)
+    except StopIteration:
+        raise RuntimeError(f"no text block in response for {row['IRI']} ({row['label']})")
+    return row
+
+def main(in_path="data/definitions.csv", out_path="data/definitions_enriched.csv", workers=16):
     with open(in_path, newline="", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
-    for row in rows:
-        row["definition_enriched"] = normalize(row["label"], row["definition"])
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        rows = list(pool.map(enrich, rows))   # preserves row order
     with open(out_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["IRI", "label", "definition", "definition_enriched"])
         writer.writeheader()

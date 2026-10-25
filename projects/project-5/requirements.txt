@@ -1,8 +1,10 @@
 # Core
-mowl==1.0.2
-JPype1==1.6.0
-torch>=2.2,<3
+# mowl-borg: installed as dev build 2.1.1.dev8 (git commit b83c067) during development;
+# pinned here to the nearest PyPI release for a normal, reproducible `pip install`.
+mowl-borg==2.1.0
+JPype1==1.7.1
+torch==2.14.1
 rdflib==7.0.0
-pandas==2.2.2
+pandas==3.1.0
 anthropic==2.3.0
 python-dotenv==1.2.4
